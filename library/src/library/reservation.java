@@ -101,15 +101,16 @@ public class reservation extends JFrame {
 			con = DriverManager.getConnection(url, username, password);
 			stmt = con.createStatement();
 
-			String sql = "select * from 도서;";
+			String sql = "select * from 도서;"; // 도서 테이블 전체조회
 
 			ResultSet result = stmt.executeQuery(sql);
 
 			while (result.next()) {
+				//필요한 데이터 한 행씩 가공
 				Object data[] = { result.getString("도서 ID"), result.getString("청구기호"), result.getString("도서명"),
 						result.getString("저자(역자)"), result.getString("출판사"), result.getString("예약가능여부") };
 
-				Book_model.addRow(data);
+				Book_model.addRow(data); //테이블에 
 			}
 
 
@@ -145,6 +146,7 @@ public class reservation extends JFrame {
 					System.out.println((Book_table.getValueAt(row, 0)).getClass().getTypeName());
 					value1 = Integer.valueOf((String) Book_table.getValueAt(row, 5));// 예약 가능 여부
 					value2 = Integer.valueOf((String)Book_table.getValueAt(row, 0));
+
 					if (value1 == 1) { // 예약 가능 여부가 1일 때
 						try {
 							// DB 연동
@@ -153,12 +155,12 @@ public class reservation extends JFrame {
 							int result = stmt.executeUpdate(sql);
 							System.out.println(result);
 							
-							String temp = "select 회원아이디 FROM 학생 where loginYN = 1;";
+							String temp = "select 회원아이디 FROM 학생 where loginYN = 1;"; //현재 로그인한 학생 학번 갖고오기
 							ResultSet r = stmt.executeQuery(temp);
 							r.next();
 							String userId = r.getString("회원아이디");
 			
-							String sql1 = "update 대여 set `예약회원ID` = "+userId+" where `도서ID` = "+value2;
+							String sql1 = "update 대여 set `예약회원ID` = "+userId+" where `도서ID` = "+value2; // 예약회원ID에 현재 로그인한 학생 학번 update
 							System.out.println(sql1);
 							int result2 = stmt.executeUpdate(sql1);
 							System.out.println(result2);
