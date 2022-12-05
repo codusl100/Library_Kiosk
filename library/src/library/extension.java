@@ -22,8 +22,8 @@ public class extension extends JFrame {
 	private JPanel panel2 = new JPanel();
 	private JLabel id = new JLabel("학번");
 	private JLabel name = new JLabel("이름");
-	private JTextField idtf = new JTextField(18);
-	private JTextField nametf = new JTextField(18);
+	private JTextField idtf = new JTextField(18); // 로그인한 회원의 학번 띄우는 텍스트필드
+	private JTextField nametf = new JTextField(18); // 로그인한 회언의 이름 띄우는 텍스트필드
 	
 	private JLabel lb = new JLabel("연장가능 횟수를 확인하고 표를 클릭하여 예약하세요.");
 	private JButton exten = new JButton("연장");
@@ -33,7 +33,7 @@ public class extension extends JFrame {
 	Statement stmt = null;
 
 	public extension() {
-
+		// DB 연동
 		con = null;
 		stmt = null;
 		String url = "jdbc:mysql://124.56.138.3:30/db2019110340"; // dbstudy 스키마
@@ -44,7 +44,9 @@ public class extension extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Container c = getContentPane();
 		c.setLayout(null);
-
+		Font plain_font = new Font("NanumSquare", Font.PLAIN, 25); // 폰트 객체 생성
+		Font big_font = new Font("NanumSquare", Font.BOLD, 30); // 폰트 객체 생성
+		
 		// 학번, 이름 표시하는 패널 설정
 		panel1.add(id);
 		panel1.add(idtf);
@@ -60,7 +62,6 @@ public class extension extends JFrame {
 		lb.setLocation(40, 250);
 		lb.setSize(600, 34);
 
-		Font plain_font = new Font("NanumSquare", Font.PLAIN, 25); // 폰트 객체 생성
 		id.setFont(plain_font);
 		name.setFont(plain_font);
 		idtf.setFont(plain_font);
@@ -72,21 +73,19 @@ public class extension extends JFrame {
 		jPanel_Book.setSize(690, 300);
 		jPanel_Book.setLocation(0, 300);
 
-		// 테이블
-		// 1. 테이블 정보정의
+		// 테이블 정보정의
 		String header[] = { "대여ID", "도서명", "대출일자", "반납가능일자", "연장가능횟수" };
 		String contents[][] = {};
-
-		// 2. jtable 클래스의 객체 생성
 		DefaultTableModel Book_model = new DefaultTableModel(contents, header);
+		// 테이블 객체 생성
 		JTable Book_table = new JTable(Book_model);
 		Book_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		// 테이블 스크롤 객체 생성(테이블에 스크롤 기능 추가)
 		JScrollPane Book_scrollPane = new JScrollPane(Book_table);
-		Book_scrollPane.setPreferredSize(new Dimension(527, 300));
-		// 3.
 		jPanel_Book.add(Book_scrollPane);
 		c.add(jPanel_Book);
-
+		
+		// DB 연동
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			con = DriverManager.getConnection(url, username, password);
@@ -113,8 +112,6 @@ public class extension extends JFrame {
 				Book_model.addRow(data);
 			}
 
-			// for (int i = 0; i < data.length; i++) {}
-
 		} catch (Exception e) {
 			System.out.println("MySQL 서버 연동 실패 > " + e.toString());
 		}
@@ -126,11 +123,10 @@ public class extension extends JFrame {
 		btn1.setSize(233, 100);
 		btn2.setSize(233, 100);
 		btn3.setSize(233, 100);
-		btn1.setBackground(Color.white);
+		btn1.setBackground(Color.white); // 버튼 색상 설정
 		btn2.setBackground(Color.white);
 		btn3.setBackground(new Color(255, 204, 153));
 
-		Font big_font = new Font("NanumSquare", Font.BOLD, 30); // 폰트 객체 생성
 		btn1.setFont(big_font);
 		btn2.setFont(big_font);
 		btn3.setFont(big_font);
@@ -138,17 +134,17 @@ public class extension extends JFrame {
 		// 연장버튼 생성 및 설정
 		exten.setSize(210, 100);
 		exten.setLocation(128, 670);
-		exten.setForeground(new Color(255, 255, 255));
+		exten.setForeground(new Color(255, 255, 255)); // 버튼 속 텍스트 색상 설정
 		exten.setBackground(new Color(255, 153, 051));
 		exten.setFont(big_font);
 
-		// 홈버튼 생성 및 설정
-		ImageIcon homeIcon = new ImageIcon("library/images/home.png");
+		// 홈버튼 설정
+		ImageIcon homeIcon = new ImageIcon("library/images/home.png"); // 이미지를 가진 이미지 아이콘 생성
 		Image homeimg = homeIcon.getImage();
-		homeimg = homeimg.getScaledInstance(52, 52, java.awt.Image.SCALE_SMOOTH);
+		homeimg = homeimg.getScaledInstance(52, 52, java.awt.Image.SCALE_SMOOTH); // 이미지 크기 조절
 		homeIcon = new ImageIcon(homeimg);
 
-		JButton btn_home = new JButton("Home", homeIcon);
+		JButton btn_home = new JButton("Home", homeIcon); // 홈버튼에 Home 이미지와 텍스트 추가
 
 		btn_home.setBackground(Color.gray);
 		btn_home.setFont(big_font); // 폰트 설정
@@ -161,7 +157,8 @@ public class extension extends JFrame {
 		btn2.addActionListener(new inActionListener());
 		btn3.addActionListener(new inActionListener());
 		btn_home.addActionListener(new inActionListener());
-		exten.addActionListener(new ActionListener() {
+		exten.addActionListener(new ActionListener() { // 연장 버튼 액션 리스너 정의
+			// DB 연동
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int value1 = 0;
@@ -175,24 +172,25 @@ public class extension extends JFrame {
 					System.out.println((Book_table.getValueAt(row, 0)).getClass().getTypeName());
 					value1 = Integer.valueOf((String) Book_table.getValueAt(row, 4));
 					value2 = Integer.valueOf((String) Book_table.getValueAt(row, 0));
-					// System.out.println(value1);
-					// System.out.println(value2);
-					if (value1 > 0) {
+					if (value1 > 0) { // 연장가능횟수가 1,2,3일 때
 						try {
-
+							// DB 연동
 							String sql = "update 대여 set `연장횟수` = `연장횟수` - 1, 반납가능일자 = DATE_FORMAT(DATE_ADD(반납가능일자 , INTERVAL 14 DAY), '%Y-%m-%d') where `대여ID`="
 									+ value2;
 							System.out.println(sql);
 							int result = stmt.executeUpdate(sql);
 							System.out.println(result);
+							// 연장 성공 확인 알림창
 							JOptionPane.showMessageDialog(null, "연장되었습니다.", "오류 메세지", JOptionPane.INFORMATION_MESSAGE);
-							new extension();
+							
+							new extension(); // 연장 정보 반영된 창으로 다시 띄움
 							dispose();
 
 						} catch (Exception ex) {
 							System.out.println("MySQL 서버 연동 실패 > " + ex.toString());
 						}
-					} else {
+					} else { // 연장가능횟수가 0일 때
+						// 예약 실패 확인 알림창
 						JOptionPane.showMessageDialog(null, "연장횟수를 초과하였습니다.", "오류 메세지", JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -213,24 +211,24 @@ public class extension extends JFrame {
 		c.add(btn_home);
 		c.add(db_connect);
 
-		setSize(700, 800);
-		setVisible(true);
+		setSize(700, 800); // 프레임창 사이즈 설정
+		setVisible(true); // 프레임창 출력
 	}
 
-	// 이동 버튼
+	// 대출, 예약, 연장, Home 버튼 클릭시 해당 창으로 이동하는 액션 리스너
 	class inActionListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			JButton b = (JButton) e.getSource();
-			if (b.getText().equals("대출")) {
+		public void actionPerformed(ActionEvent e) { 
+			JButton b = (JButton) e.getSource(); // 버튼의 텍스트 받아옴
+			if (b.getText().equals("대출")) { // 대출 버튼일 때
 				new borrow();
 				dispose();
-			} else if (b.getText().equals("예약")) {
+			} else if (b.getText().equals("예약")) { // 예약 버튼일 때
 				new reservation();
 				setVisible(false);
-			} else if (b.getText().equals("연장")) {
+			} else if (b.getText().equals("연장")) { // 연장 버튼일 때
 				new extension();
 				setVisible(false);
-			} else if (b.getText().equals("Home")) {
+			} else if (b.getText().equals("Home")) { // Home 버튼일 때
 				new library_main();
 				// db.logout();
 				dispose();
